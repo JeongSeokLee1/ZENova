@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SRM 솔루션 대시보드</title>
+<script src="https://cdn.tailwindcss.com/3.4.16">
+</script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: { primary: "#4f46e5", secondary: "#6366f1" },
+      borderRadius: {
+        none: "0px",
+        sm: "4px",
+        DEFAULT: "8px",
+        md: "12px",
+        lg: "16px",
+        xl: "20px",
+        "2xl": "24px",
+        "3xl": "32px",
+        full: "9999px",
+        button: "8px",
+      },
+    },
+  },
+};
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Noto Sans KR', sans-serif;
+background-color: #f9fafb;
+}
+.sidebar-link.active {
+background-color: rgba(79, 70, 229, 0.1);
+color: #4f46e5;
+border-left: 3px solid #4f46e5;
+}
+.sidebar-link:hover:not(.active) {
+background-color: rgba(79, 70, 229, 0.05);
+}
+.submenu {
+display: none;
+}
+.menu-group.active > .submenu {
+display: block;
+}
+.submenu-group.active > div:last-child {
+display: block;
+}
+.submenu-group > div:last-child {
+display: none;
+}
+.status-pending {
+background-color: #fef3c7;
+color: #92400e;
+}
+.status-progress {
+background-color: #e0f2fe;
+color: #0369a1;
+}
+.status-completed {
+background-color: #dcfce7;
+color: #166534;
+}
+.status-rejected {
+background-color: #fee2e2;
+color: #b91c1c;
+}
+input[type="checkbox"] {
+appearance: none;
+-webkit-appearance: none;
+width: 18px;
+height: 18px;
+border: 2px solid #d1d5db;
+border-radius: 4px;
+outline: none;
+cursor: pointer;
+position: relative;
+}
+input[type="checkbox"]:checked {
+background-color: #4f46e5;
+border-color: #4f46e5;
+}
+input[type="checkbox"]:checked::after {
+content: "";
+position: absolute;
+top: 2px;
+left: 5px;
+width: 6px;
+height: 10px;
+border: solid white;
+border-width: 0 2px 2px 0;
+transform: rotate(45deg);
+}
+.custom-switch {
+position: relative;
+display: inline-block;
+width: 36px;
+height: 20px;
+}
+.custom-switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.switch-slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #e5e7eb;
+transition: .4s;
+border-radius: 20px;
+}
+.switch-slider:before {
+position: absolute;
+content: "";
+height: 16px;
+width: 16px;
+left: 2px;
+bottom: 2px;
+background-color: white;
+transition: .4s;
+border-radius: 50%;
+}
+input:checked + .switch-slider {
+background-color: #4f46e5;
+}
+input:checked + .switch-slider:before {
+transform: translateX(16px);
+}
+.priority-high {
+border-left: 3px solid #ef4444;
+}
+.priority-medium {
+border-left: 3px solid #f59e0b;
+}
+.priority-low {
+border-left: 3px solid #10b981;
+}
+</style>
+</head>
+<body class="min-h-screen">
+<div class="flex h-screen overflow-hidden">
+<!-- 사이드바 메뉴 -->
+<aside class="w-64 bg-white shadow-lg flex-shrink-0 h-full overflow-y-auto">
+<div class="p-4 border-b">
+<img src="https://static.readdy.ai/image/7710ff3ea75713026c1275eea53222a7/a4d1ced8d92c974ecc7db2942a608129.png" alt="ZEN consulting" class="h-8 w-auto">
+</div>
+<!-- 메뉴 항목 -->
+<nav class="mt-4">
+<div class="px-4 py-2 text-xs font-semibold text-gray-500">즐겨찾기</div>
+<a href="https://readdy.ai/home/eefc85a0-99ea-421d-b1ae-a2a5d9fca475/f081ddc9-9b01-4d17-ac40-0160224bfbd6" data-readdy="true" class="sidebar-link flex items-center px-4 py-3 text-sm text-gray-700">
+<div class="w-5 h-5 mr-3 flex items-center justify-center">
+<i class="ri-star-line"></i>
+</div>
+업체 조회
+</a>
+<a href="#" class="sidebar-link flex items-center px-4 py-3 text-sm text-gray-700">
+<div class="w-5 h-5 mr-3 flex items-center justify-center">
+<i class="ri-star-line"></i>
+</div>
+계약 조회
+</a>
+<div class="px-4 py-2 text-xs font-semibold text-gray-500">메인 메뉴</div>
+<!-- 대시보드 -->
+<a href="#" class="sidebar-link active flex items-center px-4 py-3 text-sm">
+<div class="w-5 h-5 mr-3 flex items-center justify-center">
+<i class="ri-dashboard-line"></i>
+</div>
+대시보드
+</a>
+<!-- 협력업체 관리 -->
+<div class="menu-group">
+<div class="sidebar-link flex items-center px-4 py-3 text-sm text-gray-700 cursor-pointer">
+<div class="w-5 h-5 mr-3 flex items-center justify-center">
+<i class="ri-team-line"></i>
+</div>
+<span>업체 관리</span>
+<div class="ml-auto w-5 h-5 flex items-center justify-center">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+<div class="submenu pl-7">
+<a href="https://readdy.ai/home/eefc85a0-99ea-421d-b1ae-a2a5d9fca475/f081ddc9-9b01-4d17-ac40-0160224bfbd6" data-readdy="true" class="sidebar-link flex items-center px-4 py-2 text-sm text-gray-600">업체 조회</a>
+<a href="#" class="sidebar-link flex items-center px-4 py-2 text-sm text-gray-600">업체 승인관리</a>
+<div class="submenu-group">
+<div class="sidebar-link flex items-center px-4 py-2 text-sm text-gray-600 cursor-pointer">
+<span>업체요청</span>
+<div class="ml-auto w-5 h-5 flex items-center justify-center">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+<div class="pl-4">
+<a href="https://readdy.ai/home/eefc85a0-99ea-421d-b1ae-a2a5d9fca475/4e48ebbc-788f-4446-bd04-922ff7e9d01d" data-readdy="true" class="sidebar-link flex items-center px-4 py-2 text-sm text-gray-600">업체요청 작성</a>
+</div>
+</div>
+<div class="submenu-group">
+<div class="sidebar-link flex items-center px-4 py-2 text-sm text-gray-600 cursor-pointer">
+<span>업체등록</span>
+<div class="ml-auto w-5 h-5 flex items-center justify-center">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+<div class="pl-4">
+<a href="https://readdy.ai/home/eefc85a0-99ea-421d-b1ae-a2a5d9fca475/549ff984-d195-459d-ba8b-37725b62e1b5" data-readdy="true" class="sidebar-link flex items-center px-4 py-2 text-sm text-gray-600">업체등록 작성</a>
+<a href="https://readdy.ai/home/eefc85a0-99ea-421d-b1ae-a2a5d9fca475/09887538-8a1e-4779-b84d-e0cb8995711b" data-readdy="true" class="sidebar-link flex items-center px-4 py-2 text-sm text-gray-600">인증관리 진행</a>
+</div>
+</div>
+<div class="submenu-group">
+<div class="sidebar-link flex items-center px-4 py-2 text-sm text-gray-600 cursor-pointer">
+<span>정규등록</span>
+<div class="ml-auto w-5 h-5 flex items-center justify-center">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+<div class="pl-4">
+<a href="#" class="sidebar-link flex items-center px-4 py-2 text-sm text-gray-600">정규등록 작성</a>
+</div>
+</div>
+<div class="submenu-group">
+<div class="sidebar-link flex items-center px-4 py-2 text-sm text-gray-600 cursor-pointer">
+<span>업체평가</span>
+<div class="ml-auto w-5 h-5 flex items-center justify-center">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+<div class="pl-4">
+<a href="#" class="sidebar-link flex items-center px-4 py-2 text-sm text-gray-600">업체평가 작성</a>
+</div>
+</div>
+</div>
+</div>
+<!-- 입찰 관리 -->
+<div class="menu-group">
+<div class="sidebar-link flex items-center px-4 py-3 text-sm text-gray-700 cursor-pointer">
+<div class="w-5 h-5 mr-3 flex items-center justify-center">
+<i class="ri-auction-line"></i>
+</div>
+<span>입찰 관리</span>
+<div class="ml-auto w-5 h-5 flex items-center justify-center">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+<div class="submenu pl-7">
+<a href="#" class="sidebar-link flex items-center px-4 py-2 text-sm text-gray-600">입찰 조회</a>
+</div>
+</div>
+<!-- 계약 관리 -->
+<div class="menu-group">
+<div class="sidebar-link flex items-center px-4 py-3 text-sm text-gray-700 cursor-pointer">
+<div class="w-5 h-5 mr-3 flex items-center justify-center">
+<i class="ri-file-text-line"></i>
+</div>
+<span>계약 관리</span>
+<div class="ml-auto w-5 h-5 flex items-center justify-center">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+<div class="submenu pl-7">
+<a href="#" class="sidebar-link flex items-center px-4 py-2 text-sm text-gray-600">계약 조회</a>
+</div>
+</div>
+<!-- 조달 관리 -->
+<div class="menu-group">
+<div class="sidebar-link flex items-center px-4 py-3 text-sm text-gray-700 cursor-pointer">
+<div class="w-5 h-5 mr-3 flex items-center justify-center">
+<i class="ri-shopping-cart-line"></i>
+</div>
+<span>조달 관리</span>
+<div class="ml-auto w-5 h-5 flex items-center justify-center">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+<div class="submenu pl-7">
+<a href="#" class="sidebar-link flex items-center px-4 py-2 text-sm text-gray-600">구매요청 조회</a>
+<a href="#" class="sidebar-link flex items-center px-4 py-2 text-sm text-gray-600">구매오더 조회</a>
+</div>
+</div>
+<!-- 공통 -->
+<div class="menu-group">
+<div class="sidebar-link flex items-center px-4 py-3 text-sm text-gray-700 cursor-pointer">
+<div class="w-5 h-5 mr-3 flex items-center justify-center">
+<i class="ri-settings-3-line"></i>
+</div>
+<span>공통</span>
+<div class="ml-auto w-5 h-5 flex items-center justify-center">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+<div class="submenu pl-7">
+<div class="submenu-group">
+<div class="sidebar-link flex items-center px-4 py-2 text-sm text-gray-600 cursor-pointer">
+<span>계정관리</span>
+<div class="ml-auto w-5 h-5 flex items-center justify-center">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+<div class="pl-4">
+<a href="#" class="sidebar-link flex items-center px-4 py-2 text-sm text-gray-600">사용자 계정관리</a>
+</div>
+</div>
+</div>
+</div>
+</nav>
+</nav>
+</aside>
+<!-- 메인 컨텐츠 -->
+<div class="flex-1 flex flex-col overflow-hidden">
+<!-- 상단 헤더 -->
+<header class="bg-white shadow-sm h-16 flex items-center px-6 justify-between">
+<div class="flex items-center">
+<h1 class="text-xl font-semibold text-gray-800">대시보드</h1>
+</div>
+<div class="flex items-center space-x-4">
+<!-- 검색창 -->
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<div class="w-5 h-5 text-gray-400 flex items-center justify-center">
+<i class="ri-search-line"></i>
+</div>
+</div>
+<input type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-primary focus:border-primary block w-64 pl-10 p-2.5" placeholder="검색어를 입력하세요">
+</div>
+<!-- 알림 아이콘 -->
+<div class="relative">
+<button class="p-1 rounded-full text-gray-600 hover:bg-gray-100 focus:outline-none">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-notification-3-line"></i>
+</div>
+</button>
+<div class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></div>
+</div>
+<!-- 대시보드 설정 -->
+<button class="p-1 rounded-full text-gray-600 hover:bg-gray-100 focus:outline-none">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-settings-4-line"></i>
+</div>
+</button>
+<!-- 사용자 프로필 -->
+<div class="flex items-center">
+<button class="flex items-center space-x-2 focus:outline-none">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-medium">
+김
+</div>
+<div class="text-sm font-medium text-gray-700">김민준</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</button>
+</div>
+</div>
+</header>
+<!-- 메인 컨텐츠 영역 -->
+<main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+<!-- 공지사항 배너 -->
+<div class="bg-white rounded-md shadow-sm p-4 mb-8 flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 flex items-center justify-center rounded-full bg-red-100">
+<i class="ri-notification-3-fill text-red-600"></i>
+</div>
+<div>
+<span class="text-sm font-medium text-gray-500">공지</span>
+<h3 class="text-base font-medium text-gray-900">7월 Hot Fix 일정 안내</h3>
+</div>
+</div>
+<button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+<i class="ri-close-line"></i>
+</button>
+</div>
+<!-- 요약 카드 섹션 -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+<!-- 구매요청 현황 -->
+<div class="bg-white rounded-md shadow p-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-medium text-gray-700">구매요청 현황</h3>
+<div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-file-list-3-line"></i>
+</div>
+</div>
+</div>
+<div class="flex items-end">
+<span class="text-3xl font-bold text-gray-800">36</span>
+<span class="ml-2 text-sm text-blue-600">건</span>
+</div>
+<div class="mt-2 text-sm text-gray-500">승인중: 5</div>
+</div>
+<!-- 구매오더 현황 -->
+<div class="bg-white rounded-md shadow p-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-medium text-gray-700">구매오더 현황</h3>
+<div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-shopping-cart-line"></i>
+</div>
+</div>
+</div>
+<div class="flex items-end">
+<span class="text-3xl font-bold text-gray-800">82</span>
+<span class="ml-2 text-sm text-blue-600">(총 금액: ₩67.2억)</span>
+</div>
+<div class="mt-2 text-sm text-gray-500">승인중: 5</div>
+</div>
+<!-- 입고 현황 -->
+<div class="bg-white rounded-md shadow p-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-medium text-gray-700">입고 현황</h3>
+<div class="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center text-violet-600">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-inbox-line"></i>
+</div>
+</div>
+</div>
+<div class="flex items-end">
+<span class="text-3xl font-bold text-gray-800">45</span>
+<span class="ml-2 text-sm text-green-600">건</span>
+</div>
+<div class="mt-2 text-sm text-gray-500">승인중: 8</div>
+</div>
+<!-- 업체등록 현황 -->
+<div class="bg-white rounded-md shadow p-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-medium text-gray-700">업체등록 현황</h3>
+<div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-team-line"></i>
+</div>
+</div>
+</div>
+<div class="flex items-end">
+<span class="text-3xl font-bold text-gray-800">15</span>
+<span class="ml-2 text-sm text-green-600">건</span>
+</div>
+<div class="mt-2 text-sm text-gray-500">승인중: 7</div>
+</div>
+<!-- 계약 현황 -->
+<div class="bg-white rounded-md shadow p-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-medium text-gray-700">계약 현황</h3>
+<div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-file-text-line"></i>
+</div>
+</div>
+</div>
+<div class="flex items-end">
+<span class="text-3xl font-bold text-gray-800">28</span>
+<span class="ml-2 text-sm text-yellow-600">건</span>
+</div>
+<div class="mt-2 text-sm text-gray-500">만료예정 계약: 3</div>
+</div>
+<!-- 입찰 현황 -->
+<div class="bg-white rounded-md shadow p-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-medium text-gray-700">입찰 현황</h3>
+<div class="w-10 h-10 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-600">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-auction-line"></i>
+</div>
+</div>
+</div>
+<div class="flex items-end">
+<span class="text-3xl font-bold text-gray-800">12</span>
+<span class="ml-2 text-sm text-yellow-600">건</span>
+</div>
+<div class="mt-2 text-sm text-gray-500">마감임박: 3</div>
+</div>
+</div>
+<!-- 추가 섹션 -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+<!-- 달력 -->
+<div class="bg-white rounded-md shadow">
+<div class="p-4 border-b border-gray-200 flex justify-between items-center">
+<h3 class="text-lg font-semibold text-gray-800">예정된 주요 일정</h3>
+<button class="text-gray-400 hover:text-gray-600">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-more-2-fill"></i>
+</div>
+</button>
+</div>
+<div class="p-4">
+<div class="space-y-4">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+<i class="ri-calendar-event-line text-red-600"></i>
+</div>
+<div>
+<p class="text-sm font-medium text-gray-900">25년 서버 유지보수 계약 만료</p>
+<p class="text-xs text-gray-500">2025-06-26 14:00</p>
+</div>
+</div>
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+<i class="ri-calendar-event-line text-blue-600"></i>
+</div>
+<div>
+<p class="text-sm font-medium text-gray-900">오피스디포 계약 만료</p>
+<p class="text-xs text-gray-500">2025-06-28 10:00</p>
+</div>
+</div>
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+<i class="ri-calendar-event-line text-green-600"></i>
+</div>
+<div>
+<p class="text-sm font-medium text-gray-900">서림빌딩 확장 공사 입찰 마감</p>
+<p class="text-xs text-gray-500">2025-06-30 15:30</p>
+</div>
+</div>
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+<i class="ri-calendar-event-line text-purple-600"></i>
+</div>
+<div>
+<p class="text-sm font-medium text-gray-900">MS Office 라이선스 계약 만료</p>
+<p class="text-xs text-gray-500">2025-07-02 13:00</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 최근 본 문서 -->
+<div class="bg-white rounded-md shadow">
+<div class="p-4 border-b border-gray-200 flex justify-between items-center">
+<h3 class="text-lg font-semibold text-gray-800">최근 본 문서</h3>
+<button class="text-gray-400 hover:text-gray-600">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-more-2-fill"></i>
+</div>
+</button>
+</div>
+<div class="p-4">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
+<i class="ri-draft-line text-indigo-600"></i>
+</div>
+<div>
+<p class="text-sm font-medium text-gray-900">RC2002 쁠랑공사 선급금</p>
+<p class="text-xs text-gray-500">작성중</p>
+</div>
+</div>
+<span class="px-2 py-1 text-xs rounded-full status-pending">임시저장</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center">
+<i class="ri-file-list-3-line text-rose-600"></i>
+</div>
+<div>
+<p class="text-sm font-medium text-gray-900">PR1000 구매요청 건</p>
+<p class="text-xs text-gray-500">승인대기</p>
+</div>
+</div>
+<span class="px-2 py-1 text-xs rounded-full status-progress">검토중</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
+<i class="ri-file-list-3-line text-emerald-600"></i>
+</div>
+<div>
+<p class="text-sm font-medium text-gray-900">SP0321 시설공사 입찰 건</p>
+<p class="text-xs text-gray-500">승인완료</p>
+</div>
+</div>
+<span class="px-2 py-1 text-xs rounded-full status-completed">완료</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 내 문서 -->
+<div class="bg-white rounded-md shadow">
+<div class="p-4 border-b border-gray-200 flex justify-between items-center">
+<h3 class="text-lg font-semibold text-gray-800">내 문서</h3>
+<button class="text-gray-400 hover:text-gray-600">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-more-2-fill"></i>
+</div>
+</button>
+</div>
+<div class="p-4">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+<i class="ri-file-list-3-line text-blue-600"></i>
+</div>
+<div>
+<p class="text-sm font-medium text-gray-900">P0012 구매 오더 건</p>
+<p class="text-xs text-gray-500">2025-06-24 14:30</p>
+</div>
+</div>
+<span class="px-2 py-1 text-xs rounded-full status-pending">임시저장</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+<i class="ri-file-list-3-line text-purple-600"></i>
+</div>
+<div>
+<p class="text-sm font-medium text-gray-900">PR1000 구매 요청 건</p>
+<p class="text-xs text-gray-500">2025-06-24 11:20</p>
+</div>
+</div>
+<span class="px-2 py-1 text-xs rounded-full status-progress">승인중</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+<i class="ri-file-list-3-line text-green-600"></i>
+</div>
+<div>
+<p class="text-sm font-medium text-gray-900">CO1300 ITSM 유지보수 계약 건</p>
+<p class="text-xs text-gray-500">2025-06-24 09:45</p>
+</div>
+</div>
+<span class="px-2 py-1 text-xs rounded-full status-completed">완료</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center">
+<i class="ri-team-line text-amber-600"></i>
+</div>
+<div>
+<p class="text-sm font-medium text-gray-900">스마트 컴포넌트 업체등록 변경 승인</p>
+<p class="text-xs text-gray-500">2025-06-23 16:15</p>
+</div>
+</div>
+<span class="px-2 py-1 text-xs rounded-full status-progress">승인중</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 할 일 목록 섹션 -->
+<div class="bg-white rounded-md shadow">
+<div class="p-6 border-b border-gray-200">
+<h2 class="text-lg font-semibold text-gray-800">할 일 목록</h2>
+</div>
+<!-- 탭 메뉴 -->
+<div class="px-6 py-3 bg-gray-50 border-b border-gray-200">
+<div class="inline-flex rounded-sm p-1 bg-gray-100">
+<button id="tab-pr" class="px-4 py-2 text-sm font-medium rounded-full text-gray-600 whitespace-nowrap">구매요청</button>
+<button id="tab-po" class="px-4 py-2 text-sm font-medium rounded-full text-gray-600 whitespace-nowrap">구매오더</button>
+<button id="tab-bid" class="px-4 py-2 text-sm font-medium rounded-full text-gray-600 whitespace-nowrap">입찰</button>
+<button id="tab-contract" class="px-4 py-2 text-sm font-medium rounded-full text-gray-600 whitespace-nowrap">계약</button>
+<button id="tab-vendor" class="px-4 py-2 text-sm font-medium rounded-full bg-white shadow-sm text-gray-800 whitespace-nowrap">업체</button>
+</div>
+</div>
+<!-- 탭 컨텐츠 - PR (기본적으로 숨김) -->
+<div id="content-pr" class="p-6 hidden">
+<div class="overflow-x-auto">
+<table class="min-w-full divide-y divide-gray-200">
+<thead class="bg-gray-50">
+<tr>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PR 번호</th>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">요청 부서</th>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">품목</th>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">예상 금액</th>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상태</th>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">요청일</th>
+<th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">액션</th>
+</tr>
+</thead>
+<tbody class="bg-white divide-y divide-gray-200">
+<tr>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">PR-2025-0622-005</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">연구개발팀</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">LCD 패널</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₩5,800,000</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2 py-1 text-xs rounded-full status-pending">검토 필요</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-06-22</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<div class="flex justify-end space-x-2">
+<button class="text-primary hover:text-primary-dark">상세</button>
+<button class="text-primary hover:text-primary-dark">처리</button>
+</div>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">PR-2025-0621-008</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">생산팀</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">메모리 칩</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₩7,200,000</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2 py-1 text-xs rounded-full status-pending">검토 필요</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-06-21</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<div class="flex justify-end space-x-2">
+<button class="text-primary hover:text-primary-dark">상세</button>
+<button class="text-primary hover:text-primary-dark">처리</button>
+</div>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">PR-2025-0620-012</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">품질관리팀</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">테스트 장비</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₩4,500,000</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2 py-1 text-xs rounded-full status-progress">처리 중</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-06-20</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<div class="flex justify-end space-x-2">
+<button class="text-primary hover:text-primary-dark">상세</button>
+<button class="text-primary hover:text-primary-dark">수정</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="flex justify-between items-center mt-6">
+<div class="text-sm text-gray-500">총 5개 항목 중 1-3 표시</div>
+<div class="flex space-x-2">
+<button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-500 disabled:opacity-50" disabled>이전</button>
+<button class="px-3 py-1 bg-primary text-white rounded text-sm">1</button>
+<button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-700">2</button>
+<button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-700">다음</button>
+</div>
+</div>
+</div>
+<!-- 탭 컨텐츠 - 승인 (기본적으로 숨김) -->
+<div id="content-approval" class="p-6 hidden">
+<div class="overflow-x-auto">
+<table class="min-w-full divide-y divide-gray-200">
+<thead class="bg-gray-50">
+<tr>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">문서 번호</th>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">문서 유형</th>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">요청자</th>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">제목</th>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상태</th>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">요청일</th>
+<th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">액션</th>
+</tr>
+</thead>
+<tbody class="bg-white divide-y divide-gray-200">
+<tr>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">APV-2025-0623-001</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">PO</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">박지훈</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">삼성전자 반도체 부품 발주</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2 py-1 text-xs rounded-full status-pending">승인 대기</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-06-23</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<div class="flex justify-end space-x-2">
+<button class="text-primary hover:text-primary-dark">상세</button>
+<button class="text-primary hover:text-primary-dark">승인</button>
+<button class="text-red-500 hover:text-red-700">반려</button>
+</div>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">APV-2025-0622-008</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">PR</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">이수진</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">연구개발팀 LCD 패널 구매요청</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2 py-1 text-xs rounded-full status-pending">승인 대기</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-06-22</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<div class="flex justify-end space-x-2">
+<button class="text-primary hover:text-primary-dark">상세</button>
+<button class="text-primary hover:text-primary-dark">승인</button>
+<button class="text-red-500 hover:text-red-700">반려</button>
+</div>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">APV-2025-0621-012</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">업체</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">김도현</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">신규 업체 '테크솔루션' 등록</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2 py-1 text-xs rounded-full status-pending">승인 대기</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-06-21</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<div class="flex justify-end space-x-2">
+<button class="text-primary hover:text-primary-dark">상세</button>
+<button class="text-primary hover:text-primary-dark">승인</button>
+<button class="text-red-500 hover:text-red-700">반려</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="flex justify-between items-center mt-6">
+<div class="text-sm text-gray-500">총 12개 항목 중 1-3 표시</div>
+<div class="flex space-x-2">
+<button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-500 disabled:opacity-50" disabled>이전</button>
+<button class="px-3 py-1 bg-primary text-white rounded-md text-sm">1</button>
+<button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700">2</button>
+<button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700">3</button>
+<button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700">4</button>
+<button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700">다음</button>
+</div>
+</div>
+</div>
+<!-- 탭 컨텐츠 - 협력업체 (기본적으로 숨김) -->
+<div id="content-vendor" class="p-6 hidden">
+<div class="overflow-x-auto">
+<table class="min-w-full divide-y divide-gray-200">
+<thead class="bg-gray-50">
+<tr>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">단계</th>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SRM Code</th>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">업체명</th>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">작업</th>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">유형</th>
+<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상신일</th>
+<th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">조치</th>
+</tr>
+</thead>
+<tbody class="bg-white divide-y divide-gray-200">
+<tr>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2 py-1 text-xs rounded-full bg-amber-100 text-amber-800">업체요청</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">S00000001</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">테크솔루션</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">업체요청 승인</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">IT Service</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-06-18</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<div class="flex justify-end space-x-2">
+<button class="text-primary hover:text-primary-dark">상세보기</button>
+</div>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">업체등록</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">S00000002</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">스마트컴포넌트</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">업체등록 변경 승인</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">MRO</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-06-16</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<div class="flex justify-end space-x-2">
+<button class="text-primary hover:text-primary-dark">상세보기</button>
+</div>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">정규등록</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">S00000003</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">글로벌서플라이</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">정규등록 해지 승인</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">원부자재</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-06-15</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<div class="flex justify-end space-x-2">
+<button class="text-primary hover:text-primary-dark">상세보기</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="flex justify-between items-center mt-6">
+<div class="text-sm text-gray-500">총 3개 항목 중 1-3 표시</div>
+<div class="flex space-x-2">
+<button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-500 disabled:opacity-50" disabled>이전</button>
+<button class="px-3 py-1 bg-primary text-white rounded-md text-sm">1</button>
+<button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-500 disabled:opacity-50" disabled>다음</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+<!-- 스크립트 -->
+<script id="sidebar-menu">
+document.addEventListener("DOMContentLoaded", function () {
+  const menuGroups = document.querySelectorAll(".menu-group");
+  menuGroups.forEach((group) => {
+    const toggle = group.querySelector(".sidebar-link");
+    toggle.addEventListener("click", () => {
+      group.classList.toggle("active");
+    });
+  });
+  const submenuGroups = document.querySelectorAll(".submenu-group");
+  submenuGroups.forEach((group) => {
+    const toggle = group.querySelector(".sidebar-link");
+    toggle.addEventListener("click", () => {
+      group.classList.toggle("active");
+    });
+  });
+});
+</script>
+<script id="tab-switcher">
+document.addEventListener("DOMContentLoaded", function () {
+  const tabs = ["all", "pr", "bid", "contract", "vendor"];
+  const contents = ["pr", "approval", "vendor"];
+  tabs.forEach((tab) => {
+    const tabButton = document.getElementById(`tab-${tab}`);
+    if (!tabButton) return;
+    tabButton.addEventListener("click", function () {
+      // Reset all tab buttons
+      tabs.forEach((t) => {
+        const button = document.getElementById(`tab-${t}`);
+        if (button) {
+          button.classList.remove("bg-white", "shadow-sm", "text-gray-800");
+          button.classList.add("text-gray-600");
+        }
+      });
+      // Reset all content visibility
+      contents.forEach((c) => {
+        const content = document.getElementById(`content-${c}`);
+        if (content) {
+          content.classList.add("hidden");
+        }
+      });
+      // Activate clicked tab button
+      tabButton.classList.add("bg-white", "shadow-sm", "text-gray-800");
+      tabButton.classList.remove("text-gray-600");
+      // Show corresponding content
+      const contentId = `content-${tab}`;
+      const contentElement = document.getElementById(contentId);
+      if (contentElement) {
+        contentElement.classList.remove("hidden");
+      }
+    });
+  });
+  // Set initial state - show vendor content by default
+  const defaultContent = document.getElementById("content-vendor");
+  if (defaultContent) {
+    defaultContent.classList.remove("hidden");
+  }
+  const defaultTab = document.getElementById("tab-vendor");
+  if (defaultTab) {
+    defaultTab.classList.add("bg-white", "shadow-sm", "text-gray-800");
+    defaultTab.classList.remove("text-gray-600");
+  }
+});
+</script>
+<script id="notice-handler">
+document.addEventListener("DOMContentLoaded", function () {
+  const noticeCloseBtn = document.querySelector(
+    ".bg-white.rounded-lg.shadow-sm button",
+  );
+  if (noticeCloseBtn) {
+    noticeCloseBtn.addEventListener("click", function () {
+      const noticeBanner = this.closest(".bg-white.rounded-lg.shadow-sm");
+      noticeBanner.style.display = "none";
+    });
+  }
+});
+</script>
+<script id="todo-checkbox-handler">
+document.addEventListener("DOMContentLoaded", function () {
+  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  checkboxes.forEach((checkbox) => {
+    checkbox.addEventListener("change", function () {
+      const listItem = this.closest("li");
+      if (this.checked) {
+        listItem.style.opacity = "0.6";
+        const statusSpan = listItem.querySelector("span");
+        statusSpan.classList.remove("status-pending", "status-progress");
+        statusSpan.classList.add("status-completed");
+        statusSpan.textContent = "완료";
+      } else {
+        listItem.style.opacity = "1";
+        const statusSpan = listItem.querySelector("span");
+        if (statusSpan.textContent === "완료") {
+          statusSpan.classList.remove("status-completed");
+          statusSpan.classList.add("status-progress");
+          statusSpan.textContent = "진행 중";
+        }
+      }
+    });
+  });
+});
+</script>
+</body>
+</html>
